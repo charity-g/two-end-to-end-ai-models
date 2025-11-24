@@ -23,7 +23,9 @@ cd adsnap-studio
 
 2. Install dependencies:
 ```bash
-pip install -r requirements.txt
+conda create -n adsnap-stud_1
+conda activate adsnap-stud_1
+conda install -r requirements.txt
 ```
 
 3. Create a `.env` file in the root directory:
