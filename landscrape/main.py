@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from langchain_openai import OpenAI
-from langchain_community.wikipedia import WikipediaAPIWrapper
-from langchain.core.prompts import ChatPromptTemplate
-from langchain.core.output_parsers import PydanticOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import PydanticOutputParser
+from langchain.agents import create_agent, AgentExecutor
 
 # definte class to hold output schema
 class TopicResponse(BaseModel):
@@ -49,20 +49,46 @@ class ProductSchema(BaseModel):
 
 load_dotenv()
 
+system_prompt = """
+      You are an expert industry and business intelligence researcher to help with competitive analysis and product-market fit research for startups.
+      Answer the user query and use necessary tools.
+      Wrap the output in the following schema and provide no other text:\n{format_instructions}"""
 
 # You will gathers detailed information on an entreprenueral software,
 #   technology and artificial intelligence products.
 llm  = OpenAI(model="gpt-4")
 parser = PydanticOutputParser(pydantic_object=TopicResponse)
-prompt = ChatPromptTemplate.from_template(
+template = ChatPromptTemplate.from_template(
     [("system", 
-      """
-      You are an expert industry and business intelligence researcher to help with competitive analysis and product-market fit research for startups.
-      Answer the user query and use necessary tools.
-      Wrap the output in the following schema and provide no other text:\n{format_instructions}"""),
-      ("placeholder", "{chat_history}")
-      ("human", "{query}"),
+      system_prompt),
+      ("placeholder", "{chat_history}"),
+      ("human",
+       """
+       Given a description of a prototype product, research competitors and product-market fit.
+       {industry} 
+       {description}
+       {target_audience}
+       {features}
+       {pain_points}
+       {pricing_model}
+       """),
       ("placeholder", "{agent_scratchpad}")
     ]
 )
 
+prompt = template.invoke({
+    "industry": "Companion + Wellness",
+    "description": "AI-chatbot for mental health support",
+    "target_audience": "Young adults aged 18-30",
+    "features": "24/7 availability, personalized conversations, mood tracking",
+    "pain_points": "Stigma around seeking help, lack of affordable options",
+    "pricing_model": "Freemium with premium features"  
+})
+
+agent = create_agent(
+    model=llm,
+    system_prompt=system_prompt,
+    tools=[]
+    )
+
+agent.invoke(prompt)

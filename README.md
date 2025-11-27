@@ -6,7 +6,9 @@ Tutorials from:
     - Using LangChain to model research process
     - `conda create landscrape`
     - `conda install --yes --file requirements.txt`
-    
+    - todo:
+        - add dynamic system prompt
+
 - **VancouverHousing:** https://www.youtube.com/watch?v=o6vbe5G7xNo
     - House price prediction 
     - Using ZenML = an MLOps framework
