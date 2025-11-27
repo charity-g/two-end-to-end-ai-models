@@ -49,7 +49,20 @@ class ProductSchema(BaseModel):
 
 load_dotenv()
 
+
+# You will gathers detailed information on an entreprenueral software,
+#   technology and artificial intelligence products.
 llm  = OpenAI(model="gpt-4")
-response = llm.predict("What is the capital of France?")
-print(response)
+parser = PydanticOutputParser(pydantic_object=TopicResponse)
+prompt = ChatPromptTemplate.from_template(
+    [("system", 
+      """
+      You are an expert industry and business intelligence researcher to help with competitive analysis and product-market fit research for startups.
+      Answer the user query and use necessary tools.
+      Wrap the output in the following schema and provide no other text:\n{format_instructions}"""),
+      ("placeholder", "{chat_history}")
+      ("human", "{query}"),
+      ("placeholder", "{agent_scratchpad}")
+    ]
+)
 
