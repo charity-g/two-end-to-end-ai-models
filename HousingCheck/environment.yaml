@@ -1,0 +1,9 @@
+name: housing
+channels:
+  - defaults
+dependencies:
+  - python
+  - flask
+  - scikit-learn
+  - matplotlib
+  - numpy
